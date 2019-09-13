@@ -8,10 +8,11 @@ class BitField
 {
     public:
         BitField(int bitCount);
+        BitField(std::string str);
         virtual ~BitField(){};
         void operator << (int);
         void operator >> (int);
-        void operator ^ (BitField);
+        BitField operator ^ (BitField);
         void SetByte(int, char);
         void ShiftInByte(char);
         std::string GetBytes() { return bytes; }

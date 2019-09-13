@@ -6,26 +6,39 @@ BitField::BitField(int byteCount)
     bytes.resize(byteCount, 0);
 }
 
+BitField::BitField(std::string str)
+{
+    bytes = str;
+}
+
 void BitField::operator << (int amount)
 {
+    if(amount == 0)
+        return;
+    if(amount < 0)
+        throw BitFieldException("Negative shifting not implemented.");
     if(amount > 8)
-        throw BitFieldException("Cannot currently shift more than 8 bits.");
+        throw BitFieldException("Shifting >8 bits not implemented.");
 
     char overflow = 0;
-    for (int i = bytes.length(); i >= 0; i--)
+    for (int i = bytes.length() - 1; i >= 0; i--)
     {
         char byte = bytes[i];
         bytes[i] <<= amount;
         bytes[i] |= overflow;
-        overflow = byte >> (8 - amount);
+        overflow = ((unsigned char)byte) >> (8 - amount);
     }
-    bytes[bytes.length()] |= overflow;
+    bytes[bytes.length() - 1] |= overflow;
 }
 
 void BitField::operator >> (int amount)
 {
+    if(amount == 0)
+        return;
+    if(amount < 0)
+        throw BitFieldException("Negative shifting not implemented.");
     if(amount > 8)
-        throw BitFieldException("Cannot currently shift more than 8 bits.");
+        throw BitFieldException("Shifting >8 bits not implemented.");
 
     char overflow = 0;
     for (int i = 0; i < bytes.length(); i++)
@@ -35,7 +48,7 @@ void BitField::operator >> (int amount)
         bytes[i] |= overflow;
         overflow = byte << (8 - amount);
     }
-    bytes[bytes.length()] |= overflow;
+    bytes[0] |= overflow;
 }
 
 void BitField::SetByte(int byteIndex, char data)
@@ -52,8 +65,12 @@ void BitField::ShiftInByte(char newByte)
     bytes[bytes.length() - 1] = newByte;
 }
 
-void BitField::operator ^ (BitField bf)
+BitField BitField::operator ^ (BitField bf)
 {
     if(bf.GetLength() != bytes.length())
         throw BitFieldException("BitFields must be the same size for XOR.");
+    BitField output(bytes.length());
+    for (int i = 0; i < bytes.length(); i++)
+        output.SetByte(i, bytes[i] ^ bf.GetBytes()[i]);
+    return output;
 }
