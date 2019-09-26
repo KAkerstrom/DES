@@ -10,4 +10,11 @@ class BitFieldException: public std::runtime_error {
   }
 };
 
+class DESException: public std::runtime_error {
+ public:
+  explicit DESException(const char* errMessage) :
+    std::runtime_error(errMessage) {
+  }
+};
+
 #endif // EXCEPTIONS_H
