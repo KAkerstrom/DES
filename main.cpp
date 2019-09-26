@@ -38,20 +38,14 @@ int DES(int data, int key)
 
 int main()
 {
-    BitField bf2 ("abcdef");
-
     BitField bf(6);
-    bf.ShiftInByte(8);
+    bf.ShiftInByte(0);
     bf.ShiftInByte(1);
     bf.ShiftInByte(0);
     bf.ShiftInByte(0);
     bf.ShiftInByte('a');
     bf.ShiftInByte(1);
-
-    bf2 = bf2 ^ bf;
-    bf = bf ^ bf2;
-    bf2 = bf2 ^ bf;
-
-    for(int i = 0; i < bf2.GetLength(); i++)
-        std::cout << +bf2.GetBytes()[i] << ' ';
+    bf >> 1;
+    for(int i = 0; i < bf.GetLength(); i++)
+        std::cout << +bf.GetBytes()[i] << ' ';
 }

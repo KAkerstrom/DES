@@ -1,5 +1,6 @@
 #include "BitField.h"
 #include "Exceptions.h"
+#include<bits/stdc++.h>
 
 BitField::BitField(int byteCount)
 {
@@ -72,5 +73,21 @@ BitField BitField::operator ^ (BitField bf)
     BitField output(bytes.length());
     for (int i = 0; i < bytes.length(); i++)
         output.SetByte(i, bytes[i] ^ bf.GetBytes()[i]);
+    return output;
+}
+
+BitField BitField::Left()
+{
+    if(GetLength() % 2 != 0)
+        throw BitFieldException("BitField cannot be evenly split.");
+    BitField output(bytes.substr(0, bytes.length() / 2));
+    return output;
+}
+
+BitField BitField::Right()
+{
+    if(GetLength() % 2 != 0)
+        throw BitFieldException("BitField cannot be evenly split.");
+    BitField output(bytes.substr(bytes.length() / 2));
     return output;
 }

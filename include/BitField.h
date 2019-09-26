@@ -15,6 +15,8 @@ class BitField
         BitField operator ^ (BitField);
         void SetByte(int, char);
         void ShiftInByte(char);
+        BitField Left();
+        BitField Right();
         std::string GetBytes() { return bytes; }
         int GetLength() { return bytes.length(); }
 
