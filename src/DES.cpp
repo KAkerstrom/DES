@@ -55,11 +55,15 @@ BitField DES::Round(BitField data, BitField key)
 
 BitField DES::InitialPermutation(BitField data)
 {
-  std::bitset<64> input;
-  for(int i = 0; i < 64; i++)
-  {
-
-  }
+  std::string outputStr(data.GetBytes());
+  for(int i = 0; i < 8; i++)
+    for(int j = 0; j < 8; j++)
+    {
+      char permIndex = initPermTable[i*j];
+      outputStr[i] = outputStr[i] | ((data.GetBytes()[permIndex / 8] >> permIndex % 8) & 1);
+    }
+  BitField output(outputStr);
+  return output;
 }
 
 BitField DES::InverseInitialPermutation(BitField data)

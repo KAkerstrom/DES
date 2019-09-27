@@ -1,6 +1,7 @@
 #include "BitField.h"
 #include "Exceptions.h"
 #include<bits/stdc++.h>
+#include<bitset>
 
 BitField::BitField(int byteCount)
 {

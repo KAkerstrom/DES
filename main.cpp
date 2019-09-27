@@ -2,9 +2,13 @@
 #include <iostream>
 #include <bitset>
 #include "DES.h"
+#include "test.h"
 
-int main()
+int main(int argc, char** argv)
 {
+  if(argv[1] == "test")
+
+
   DES des;
 
   std::cout << "Welcome. Press a key...\n\n1- Encrypt\n2- Decrypt\n";
