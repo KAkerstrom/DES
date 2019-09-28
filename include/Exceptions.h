@@ -3,16 +3,16 @@
 
 #include <stdexcept>
 
-class BitFieldException: public std::runtime_error {
+class DESException: public std::runtime_error {
  public:
-  explicit BitFieldException(const char* errMessage) :
+  explicit DESException(const char* errMessage) :
     std::runtime_error(errMessage) {
   }
 };
 
-class DESException: public std::runtime_error {
+class ConversionException: public std::runtime_error {
  public:
-  explicit DESException(const char* errMessage) :
+  explicit ConversionException(const char* errMessage) :
     std::runtime_error(errMessage) {
   }
 };

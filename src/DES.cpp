@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 DES::DES()
 {
@@ -12,11 +13,10 @@ DES::DES()
 
 std::string DES::Encrypt(std::string data, std::string key)
 {
-  if(key.length() != 16)
-    throw DESException("Key must be a 16-character hex string.");
-
   // Split the input data into 64-bit chunks
   std::vector<std::string> chunks;
+
+  std::cout << "\n\ndata: \n" << data << "\n\n";
 
   for(int i = 0; i < data.length() / 8; i++)
   {
@@ -28,6 +28,15 @@ std::string DES::Encrypt(std::string data, std::string key)
     chunks.push_back(chunk);
   }
 
+
+
+  std::cout << "Chunks: \n";
+  for(int i = 0; i < chunks.size(); i++)
+    std::cout << chunks[i] + '\n';
+
+
+
+
   // Initial Permutation
   chunks[0] = BSHelper::Permute(chunks[0], initPermTable, 64);
 
@@ -35,11 +44,11 @@ std::string DES::Encrypt(std::string data, std::string key)
   std::vector<std::string> keys = GenerateKeys(key);
 
   std::stringstream cipherStream;
-  for(std::string c : chunks)
+  for(int i = 0; i < chunks.size(); i++)
   {
-    std::string cipherChunk = c;
-    for (int i = 0; i < 16; i++)
-      cipherChunk = Round(cipherChunk, keys[i]);
+    std::string cipherChunk = chunks[i];
+    for (int j = 0; j < 16; j++)
+      cipherChunk = Round(cipherChunk, keys[j]);
 
     // 32 bit swap
     cipherChunk = cipherChunk.substr(cipherChunk.length() + 1) + cipherChunk.substr(0, cipherChunk.length() / 2);
@@ -102,7 +111,7 @@ std::string DES::Substitution(std::string data)
     std::string colStr("");
     colStr += inputs[i].substr(1, inputs[i].length() - 2);
 
-    std::bitset<2> rowBits(rowStr);
+    std::bitset<2> rowBits(rowStr); // THIS DOESN'T WORK. DEBUG UP TO THIS POINT TO ENSURE GOOD INPUT ////////////////////////
     std::bitset<4> colBits(colStr);
     char row = (unsigned char)rowBits.to_ulong();
     char col = (unsigned char)colBits.to_ulong();

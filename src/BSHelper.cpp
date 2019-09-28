@@ -1,5 +1,7 @@
 #include "BSHelper.h"
+#include "Exceptions.h"
 #include <bitset>
+#include <sstream>
 
 std::string BSHelper::LeftCircularShift(std::string input, int amount)
 {
@@ -23,16 +25,21 @@ std::string BSHelper::Permute(std::string input, char permTable[], int tableSize
   return output;
 }
 
-std::string AsciiToBits(std::string ascii)
+std::string BSHelper::AsciiToBits(std::string ascii)
 {
-  std::string output(ascii.length() * 8, 0);
+  std::stringstream ssOutput;
   for(int i = 0; i < ascii.length(); i++)
-    for(int j = 0; j < 8; j++)
-      output[i * j] = (unsigned char)(ascii[j] >> j) & 1 ? '1' : '0';
+  {
+    std::bitset<8> bs(ascii[i]);
+    ssOutput << bs.to_string();
+  }
+
+  std::string output;
+  ssOutput >> output;
   return output;
 }
 
-std::string HexToBits(std::string hex)
+std::string BSHelper::HexToBits(std::string hex)
 {
   std::string output(hex.length() * 4, 0);
   unsigned char bits;
@@ -44,6 +51,8 @@ std::string HexToBits(std::string hex)
       bits = hex[i] - 'A' + 10;
     else if (hex[i] >= 'a' && hex[i] <= 'f')
       bits = hex[i] - 'a' + 10;
+    else
+      throw new ConversionException("Invalid hex input.");
 
     for(int j = 0; j < 4; j++)
       output[i * j] = (bits >> 4 - j) & 1 ? '1' : '0';
@@ -51,7 +60,7 @@ std::string HexToBits(std::string hex)
   return output;
 }
 
-std::string BitsToAscii(std::string bits)
+std::string BSHelper::BitsToAscii(std::string bits)
 {
   std::string output(bits.length() / 8, 0);
   for(int i = 0; i < bits.length() / 8; i++)
