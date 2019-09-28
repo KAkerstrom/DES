@@ -11,7 +11,7 @@ class DES
         BitField Encrypt(BitField data, BitField key);
         BitField Decrypt(BitField data, BitField key);
 
-    private:
+    //private:
       BitField Round(BitField data, BitField key);
       BitField InitialPermutation(BitField data);
       BitField InverseInitialPermutation(BitField data);

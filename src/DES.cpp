@@ -3,6 +3,7 @@
 #include <vector>
 #include <bitset>
 #include <iostream>
+#include <math.h>
 
 DES::DES()
 {
@@ -35,13 +36,13 @@ BitField DES::Encrypt(BitField data, BitField key)
   chunks[0] = InitialPermutation(chunks[0]);
 
   // Generate keys
-  std::vector<BitField> keys = GenerateKeys(key);
+  //std::vector<BitField> keys = GenerateKeys(key);
 
   std::string cipher;
   for(BitField b : chunks)
     for (int i = 0; i < 16; i++)
     {
-      Round(data, keys[i]);
+      //Round(data, keys[i]);
     }
 }
 
@@ -62,7 +63,7 @@ BitField DES::InitialPermutation(BitField data)
     for(int j = 0; j < 8; j++)
     {
       char permIndex = initPermTable[i*j];
-      outputStr[i] = outputStr[i] | ((data.GetBytes()[permIndex / 8] >> permIndex % 8) & 1);
+      outputStr[i] = outputStr[i] | (data.GetBytes()[permIndex / 8] & (unsigned char)(pow(data.GetBytes()[permIndex % 8], 8 - j)));
     }
   BitField output(outputStr);
   return output;
@@ -118,24 +119,24 @@ std::vector<BitField> GenerateKeys(BitField key)
     44,49,39,56,34,53,46,42,50,36,29,32
   };
 
-  std::string permKey(newKey.GetBytes());
-  for(int i = 0; i < 56; i++)
-      permKey[i] = permKey[i] | ((newKey.GetBytes()[permChoice1[i] / 8] >> permChoice1[i] % 8) & 1);
-  newKey.SetString(permKey);
-
-  std::vector<BitField> keys;
-  int shifts[16]= { 1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1 };
-  for(int i = 0; i < 16; i++)
-  {
-    // Split into left and right
-    BitField left = newKey.Left() << shifts[i];
-    BitField right = newKey.Right() << shifts[i];
-    BitField full(left.GetBytes() + right.GetBytes());
-    std::string permKey2;
-    for(int i = 0; i < 48; i++)
-      permKey2[i] = permKey2[i] | ((newKey.GetBytes()[permChoice2[i] / 8] >> permChoice2[i] % 8) & 1);
-    BitField addKey(permKey2);
-    keys.push_back(addKey);
-  }
-  return keys;
+//  std::string permKey(newKey.GetBytes());
+//  for(int i = 0; i < 56; i++)
+//      permKey[i] = permKey[i] | ((newKey.GetBytes()[permChoice1[i] / 8] >> permChoice1[i] % 8) & 1);
+//  newKey.SetString(permKey);
+//
+//  std::vector<BitField> keys;
+//  int shifts[16]= { 1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1 };
+//  for(int i = 0; i < 16; i++)
+//  {
+//    // Split into left and right
+//    BitField left = newKey.Left() << shifts[i];
+//    BitField right = newKey.Right() << shifts[i];
+//    BitField full(left.GetBytes() + right.GetBytes());
+//    std::string permKey2;
+//    for(int i = 0; i < 48; i++)
+//      permKey2[i] = permKey2[i] | ((newKey.GetBytes()[permChoice2[i] / 8] >> permChoice2[i] % 8) & 1);
+//    BitField addKey(permKey2);
+//    keys.push_back(addKey);
+//  }
+//  return keys;
 }

@@ -33,10 +33,12 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="include/BSHelper.h" />
 		<Unit filename="include/BitField.h" />
 		<Unit filename="include/DES.h" />
 		<Unit filename="include/Exceptions.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/BSHelper.cpp" />
 		<Unit filename="src/BitField.cpp" />
 		<Unit filename="src/DES.cpp" />
 		<Unit filename="test.h" />
