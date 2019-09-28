@@ -19,6 +19,7 @@ class DES
       BitField Substitution(BitField data);
       BitField PermutedChoice1(BitField key);
       BitField PermutedChoice2(BitField key);
+      std::vector<BitField> GenerateKeys(BitField key);
 
       int initPermTable[64]=
       {

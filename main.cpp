@@ -6,7 +6,7 @@
 
 int main(int argc, char** argv)
 {
-  if(argv[1] == "test")
+  if(argv[1] == "test");
 
 
   DES des;

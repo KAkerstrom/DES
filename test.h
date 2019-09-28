@@ -2,10 +2,12 @@
 
 bool TestInitialPermutation()
 {
-
+  return false;
 }
 
-void TestAll()
+bool TestAll()
 {
+  if(!TestInitialPermutation()) return false;
 
+  return true;
 }

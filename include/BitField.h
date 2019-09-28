@@ -18,6 +18,7 @@ class BitField
         BitField Left();
         BitField Right();
         std::string GetBytes() { return bytes; }
+        std::string SetString(std::string newString) { bytes = newString; }
         int GetLength() { return bytes.length(); }
 
     protected:
