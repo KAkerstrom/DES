@@ -1,27 +1,24 @@
 #ifndef DES_H
 #define DES_H
 
-#include "BitField.h"
+#include <string>
+#include <vector>
 
 class DES
 {
     public:
         DES();
         virtual ~DES(){};
-        BitField Encrypt(BitField data, BitField key);
-        BitField Decrypt(BitField data, BitField key);
+        std::string Encrypt(std::string data, std::string key);
+        std::string Decrypt(std::string data, std::string key);
 
     //private:
-      BitField Round(BitField data, BitField key);
-      BitField InitialPermutation(BitField data);
-      BitField InverseInitialPermutation(BitField data);
-      BitField Expansion(BitField data);
-      BitField Substitution(BitField data);
-      BitField PermutedChoice1(BitField key);
-      BitField PermutedChoice2(BitField key);
-      std::vector<BitField> GenerateKeys(BitField key);
+      std::string Round(std::string data, std::string key);
+      std::string Expansion(std::string data);
+      std::string Substitution(std::string data);
+      std::vector<std::string> GenerateKeys(std::string key);
 
-      int initPermTable[64]=
+      char initPermTable[64]=
       {
         58,50,42,34,26,18,10,2,
         60,52,44,36,28,20,12,4,
@@ -33,7 +30,7 @@ class DES
         63,55,47,39,31,23,15,7,
       };
 
-      int inversePermTable[64]=
+      char inversePermTable[64]=
       {
         40, 8,48,16,56,24,64,32,
         39, 7,47,15,55,23,63,31,
@@ -45,25 +42,7 @@ class DES
         33, 1,41, 9,49,17,57,25
       };
 
-      int permTable[4][8]=
-      {
-        { 16, 7,20,21,29,12,28,17 },
-        {  1,15,23,26, 5,18,31,10 },
-        {  2, 8,24,14,32,27, 3, 9 },
-        { 19,13,30, 6,22,11, 4,25 }
-      };
-
-      int expansionTable[6][8]=
-      {
-        { 32, 1, 2, 3, 4, 5, 4, 5 },
-        {  6, 7, 8, 9, 8, 9,10,11 },
-        { 12,13,12,13,14,15,16,17 },
-        { 16,17,18,19,20,21,20,21 },
-        { 22,23,24,25,24,25,26,27 },
-        { 28,29,28,29,30,31,32, 1 }
-      };
-
-      int sTables[8][4][16]=
+      char sTables[8][4][16]=
       {
         {
           { 14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7 },

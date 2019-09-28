@@ -26,9 +26,8 @@ int main(int argc, char** argv)
       std::cout << "\nInput 64-bit hex string: [CHECK LENGTH]";
       std::cin >> key;
 
-      BitField dataBits(data);
-      BitField keyBits(key);
-      BitField output = des.Encrypt(dataBits, keyBits);
+      std::string output = des.Encrypt(data, key);
+      std::cout << output;
     }
     else if (input == "2")
     {

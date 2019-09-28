@@ -1,14 +1,5 @@
 #include "BSHelper.h"
 #include <bitset>
-//BSHelper::BSHelper()
-//{
-//  //ctor
-//}
-//
-//BSHelper::~BSHelper()
-//{
-//  //dtor
-//}
 
 std::string BSHelper::LeftCircularShift(std::string input, int amount)
 {
@@ -24,7 +15,7 @@ std::string BSHelper::Xor(std::string str1, std::string str2)
   return output;
 }
 
-std::string BSHelper::Permute(std::string input, int permTable[], int tableSize)
+std::string BSHelper::Permute(std::string input, char permTable[], int tableSize)
 {
   std::string output(tableSize, 0);
   for(int i = 0; i < tableSize; i++)
