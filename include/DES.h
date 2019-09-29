@@ -18,7 +18,7 @@ class DES
       std::string Substitution(std::string data);
       std::vector<std::string> GenerateKeys(std::string key);
 
-      char initPermTable[64]=
+      char initPermTable[64] =
       {
         58,50,42,34,26,18,10,2,
         60,52,44,36,28,20,12,4,
@@ -27,10 +27,10 @@ class DES
         57,49,41,33,25,17, 9,1,
         59,51,43,35,27,19,11,3,
         61,53,45,37,29,21,13,5,
-        63,55,47,39,31,23,15,7,
+        63,55,47,39,31,23,15,7
       };
 
-      char inversePermTable[64]=
+      char inversePermTable[64] =
       {
         40, 8,48,16,56,24,64,32,
         39, 7,47,15,55,23,63,31,
@@ -42,7 +42,7 @@ class DES
         33, 1,41, 9,49,17,57,25
       };
 
-      char sTables[8][4][16]=
+      char sTables[8][4][16] =
       {
         {
           { 14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7 },

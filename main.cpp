@@ -28,7 +28,7 @@ int main(int argc, char** argv)
       std::cout << "\nInput data: ";
 
       #ifdef DEBUG
-        data = "100100011010001010110011110001001101010111100110111101111";
+        data = "0000000100100011010001010110011110001001101010111100110111101111";
       #else
         std::cin >> data;
         data = BSHelper::AsciiToBits(data);

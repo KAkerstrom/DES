@@ -51,7 +51,7 @@ std::string DES::Encrypt(std::string data, std::string key)
   chunks[0] = BSHelper::Permute(chunks[0], initPermTable, 64);
 
   #ifdef DEBUG
-  std::cout << "\n" << "After permutation: \n" << data << "\n\n";
+  std::cout << "\n" << "After permutation: \n" << chunks[0] << "\n\n";
   #endif // DEBUG
 
   // Generate keys
@@ -73,9 +73,11 @@ std::string DES::Encrypt(std::string data, std::string key)
     for (int j = 0; j < 16; j++)
     {
       #ifdef DEBUG
-      std::cout << "\nRound " << j << ":";
+      std::cout << "\nRound " << j + 1 << ":";
       #endif // DEBUG
       cipherChunk = Round(cipherChunk, keys[j]);
+      if(i != 15)
+        cipherChunk = cipherChunk.substr(cipherChunk.length() / 2) + cipherChunk.substr(0, cipherChunk.length() / 2);
     }
 
     // 32 bit swap
@@ -109,8 +111,7 @@ std::string DES::Round(std::string data, std::string key)
 {
   std::string left = data.substr(0, data.length() / 2);
   std::string right = data.substr(data.length() / 2);
-  std::string originalRight = right;
-  char expansionTable[48]=
+  char expansionTable[48] =
   {
     32,1,2,3,4,5,4,5,6,7,8,9,8,9,10,11,
     12,13,12,13,14,15,16,17,16,17,18,19,20,21,20,21,
@@ -136,10 +137,13 @@ std::string DES::Round(std::string data, std::string key)
   };
   right = BSHelper::Permute(right, permute, 32);
       #ifdef DEBUG
-      std::cout << "\nf(R,K):   " << right;
-      std::cout << "\nL = R-1:  " << originalRight << "\n\n";
+      std::cout << "\nf(R,K):    " << right;
       #endif // DEBUG
+  std::string originalRight = BSHelper::Xor(right, left);
   right = BSHelper::Xor(left, right);
+      #ifdef DEBUG
+      std::cout << "\nL = R-1:   " << originalRight << "\n\n";
+      #endif // DEBUG
   return originalRight + right;
 }
 
@@ -159,17 +163,16 @@ std::string DES::Substitution(std::string data)
   std::stringstream ssOutput;
   for(int i = 0; i < 8; i++)
   {
-    std::string rowStr("");
-    rowStr += inputs[i][0] + inputs[i][inputs[i].length() - 1];
-    std::string colStr("");
-    colStr += inputs[i].substr(1, inputs[i].length() - 2);
+    std::string colStr = inputs[i].substr(1, inputs[i].length() - 2);
 
-    std::bitset<2> rowBits(rowStr); // THIS DOESN'T WORK. DEBUG UP TO THIS POINT TO ENSURE GOOD INPUT ////////////////////////
+    std::bitset<2> rowBits;
+    rowBits.set(1, inputs[i][0] == '1');
+    rowBits.set(0, inputs[i][inputs[i].length() - 1] == '1');
     std::bitset<4> colBits(colStr);
     char row = (unsigned char)rowBits.to_ulong();
     char col = (unsigned char)colBits.to_ulong();
 
-    std::bitset<8> subBits(sTables[i][row][col]);
+    std::bitset<4> subBits(sTables[i][row][col]);
     ssOutput << subBits.to_string();
   }
   std::string output;
