@@ -12,6 +12,7 @@ class BSHelper
     static std::string AsciiToBits(std::string ascii);
     static std::string HexToBits(std::string hex);
     static std::string BitsToAscii(std::string bits);
+    static std::string BitsToHex(std::string bits);
 };
 
 #endif // BSHELPER_H

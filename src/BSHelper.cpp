@@ -1,6 +1,7 @@
 #include "BSHelper.h"
 #include "Exceptions.h"
 #include <bitset>
+#include <iostream>
 #include <sstream>
 
 std::string BSHelper::LeftCircularShift(std::string input, int amount)
@@ -38,10 +39,7 @@ std::string BSHelper::AsciiToBits(std::string ascii)
     std::bitset<8> bs(ascii[i]);
     ssOutput << bs.to_string();
   }
-
-  std::string output;
-  ssOutput >> output;
-  return output;
+  return ssOutput.str();
 }
 
 std::string BSHelper::HexToBits(std::string hex)
@@ -62,14 +60,26 @@ std::string BSHelper::HexToBits(std::string hex)
     std::bitset<4> bs(bits);
     ssOutput << bs.to_string();
   }
-  std::string output;
-  ssOutput >> output;
-  return output;
+  return ssOutput.str();
+}
+
+std::string BSHelper::BitsToHex(std::string bits)
+{
+  std::stringstream output;
+  for(int i = 0; i < bits.length() / 4; i++)
+  {
+    std::bitset<4> bs;
+    for(int j = 0; j < 4; j++)
+      bs.set(3 - j, bits[i * 4 + j] == '1');
+      std::string test = output.str();
+    output << std::hex << std::uppercase << +bs.to_ulong();
+  }
+  return output.str();
 }
 
 std::string BSHelper::BitsToAscii(std::string bits)
 {
-  std::string output(bits.length() / 8, 0);
+  std::string output(bits.length() / 8, '~');
   for(int i = 0; i < bits.length() / 8; i++)
   {
     std::bitset<8> bs(bits.substr(i * 8, 8));
