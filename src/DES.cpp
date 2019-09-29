@@ -27,19 +27,17 @@ std::string DES::Encrypt(std::string data, std::string key)
   #endif // DEBUG
 
   int index = 0;
-  do
+  for (int i = 0; i < data.length(); i += 64)
   {
     std::string chunk;
-    if(index + 64 < data.length())
-      chunk = data.substr(index * 64, 64);
+    if(i + 64 < data.length())
+      chunk = data.substr(i, 64);
     else
-      chunk = data.substr(index);
+      chunk = data.substr(i);
     if(chunk.length() < 64)
       chunk += std::string(64 - chunk.length(), '0');
     chunks.push_back(chunk);
-
   }
-  while (++index < data.length() / 64);
 
   #ifdef DEBUG
   std::cout << "Chunks: \n";
@@ -121,49 +119,46 @@ std::string DES::Decrypt(std::string data, std::string key)
   std::cout << "\n\ndata: \n" << data << "\n\n";
   #endif // DEBUG
 
-  int index = 0;
-  do
+  for (int i = 0; i < data.length(); i += 64)
   {
     std::string chunk;
-    if(index + 64 < data.length())
-      chunk = data.substr(index * 64, 64);
+    if(i + 64 < data.length())
+      chunk = data.substr(i, 64);
     else
-      chunk = data.substr(index);
+      chunk = data.substr(i);
     if(chunk.length() < 64)
       chunk += std::string(64 - chunk.length(), '0');
     chunks.push_back(chunk);
-
   }
-  while (++index < data.length() / 64);
 
-  #ifdef DEBUG
-  std::cout << "Chunks: \n";
-  for(int i = 0; i < chunks.size(); i++)
-    std::cout << chunks[i] + '\n';
-  #endif
+      #ifdef DEBUG
+      std::cout << "Chunks: \n";
+      for(int i = 0; i < chunks.size(); i++)
+        std::cout << chunks[i] + '\n';
+      #endif
 
   // Initial Permutation
-  chunks[0] = BSHelper::Permute(chunks[0], inversePermTable, 64);
+  chunks[0] = BSHelper::Permute(chunks[0], initPermTable, 64);
 
-  #ifdef DEBUG
-  std::cout << "\n" << "After permutation: \n" << chunks[0] << "\n\n";
-  #endif // DEBUG
+      #ifdef DEBUG
+      std::cout << "\n" << "After permutation: \n" << chunks[0] << "\n\n";
+      #endif // DEBUG
 
   // Generate keys
   std::vector<std::string> keys = GenerateKeys(key);
 
-  #ifdef DEBUG
-  std::cout << "\n\nKeys:\n";
-  for (int i = 0; i < keys.size(); i++)
-    std::cout << keys[i] << '\n';
-  #endif // DEBUG
+      #ifdef DEBUG
+      std::cout << "\n\nKeys:\n";
+      for (int i = 0; i < keys.size(); i++)
+        std::cout << keys[i] << '\n';
+      #endif // DEBUG
 
   std::stringstream cipherStream;
   for(int i = 0; i < chunks.size(); i++)
   {
-    #ifdef DEBUG
-    std::cout << "\n-----------------\nChunk " << i << "\n-----------------\n\n";
-    #endif // DEBUG
+        #ifdef DEBUG
+        std::cout << "\n-----------------\nChunk " << i << "\n-----------------\n\n";
+        #endif // DEBUG
     std::string cipherChunk = chunks[i];
     std::string right = chunks[i].substr(chunks[0].length() / 2);
     std::string left = chunks[i].substr(0, chunks[0].length() / 2);
@@ -188,11 +183,11 @@ std::string DES::Decrypt(std::string data, std::string key)
     cipherChunk = left + right;
 
     // Inverse initial permutation
-    cipherChunk = BSHelper::Permute(cipherChunk, initPermTable, 64);
+    cipherChunk = BSHelper::Permute(cipherChunk, inversePermTable, 64);
 
-    #ifdef DEBUG
-    std::cout << "\n\nChunk Value:\n" << BSHelper::BitsToHex(cipherChunk) << "\n\n";
-    #endif // DEBUG
+        #ifdef DEBUG
+        std::cout << "\n\nChunk Value:\n" << BSHelper::BitsToHex(cipherChunk) << "\n\n";
+        #endif // DEBUG
 
     cipherStream << cipherChunk;
   }
