@@ -5,8 +5,9 @@
 
 std::string BSHelper::LeftCircularShift(std::string input, int amount)
 {
-
-  return input.substr(amount + 1) + input.substr(0, amount);
+  std::string a = input.substr(amount);
+  std::string b = input.substr(0, amount);
+  return a + b;
 }
 
 std::string BSHelper::Xor(std::string str1, std::string str2)
@@ -24,7 +25,7 @@ std::string BSHelper::Permute(std::string input, char permTable[], int tableSize
   {
     if(permTable[i] > input.size())
       throw ConversionException("Permutation input string shorter than table requires.");
-    output[i] = input[permTable[i]];
+    output[i] = input[permTable[i] - 1];
   }
   return output;
 }
@@ -45,7 +46,7 @@ std::string BSHelper::AsciiToBits(std::string ascii)
 
 std::string BSHelper::HexToBits(std::string hex)
 {
-  std::string output(hex.length() * 4, 0);
+  std::stringstream ssOutput;;
   unsigned char bits;
   for(int i = 0; i < hex.length(); i++)
   {
@@ -58,9 +59,11 @@ std::string BSHelper::HexToBits(std::string hex)
     else
       throw new ConversionException("Invalid hex input.");
 
-    for(int j = 0; j < 4; j++)
-      output[i * j] = (bits >> 4 - j) & 1 ? '1' : '0';
+    std::bitset<4> bs(bits);
+    ssOutput << bs.to_string();
   }
+  std::string output;
+  ssOutput >> output;
   return output;
 }
 

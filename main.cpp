@@ -1,3 +1,5 @@
+#define DEBUG
+
 #include <iostream>
 #include <bitset>
 #include "Exceptions.h"
@@ -24,22 +26,36 @@ int main(int argc, char** argv)
     if(input == "1")
     {
       std::cout << "\nInput data: ";
-      //std::cin >> data;
-      data = "abcdefghijklmnopqrstuvwxyz"; /////////////////////
-      data = BSHelper::AsciiToBits(data);
+
+      #ifdef DEBUG
+        data = "100100011010001010110011110001001101010111100110111101111";
+      #else
+        std::cin >> data;
+        data = BSHelper::AsciiToBits(data);
+      #endif // DEBUG
+
 
       bool validKey = false;
       while (!validKey)
       {
         std::cout << "\nInput 64-bit hex string: [CHECK LENGTH]";
-        //std::cin >> key;
-        key = "1234567890123456"; //////////////////////
+
+        #ifdef DEBUG
+          key = "133457799BBCDFF1";
+        #else
+          std::cin >> key;
+        #endif // DEBUG
+
         if(key.length() != 16)
           std::cout << "\nInvalid key length. Must be 16 hex digits.";
         else
           try
           {
             key = BSHelper::HexToBits(key);
+            #ifdef DEBUG
+            std::cout << "\n\nKey Binary: \n" << key << '\n';
+            #endif // DEBUG
+
             validKey = true;
           }
           catch(ConversionException e)

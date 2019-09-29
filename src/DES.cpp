@@ -13,15 +13,12 @@ DES::DES()
 {
 }
 
+/// Encrypt the data with the key
+/// data: The data as a binary string
+/// key: The key as a binary string
+/// returns the encrypted data as a binary string
 std::string DES::Encrypt(std::string data, std::string key)
 {
-  // Initial Permutation
-  data = BSHelper::Permute(data, initPermTable, 64);
-
-  #ifdef DEBUG
-  std::cout << "\n" << "After permutation: \n" << data << "\n\n";
-  #endif // DEBUG
-
   // Split the input data into 64-bit chunks
   std::vector<std::string> chunks;
 
@@ -29,21 +26,33 @@ std::string DES::Encrypt(std::string data, std::string key)
   std::cout << "\n\ndata: \n" << data << "\n\n";
   #endif // DEBUG
 
-  for(int i = 0; i < data.length() / 8; i++)
+  int index = 0;
+  do
   {
     std::string chunk;
-    if(i + 8 < data.length())
-      chunk = data.substr(i * 8, 8);
+    if(index + 64 < data.length())
+      chunk = data.substr(index * 64, 64);
     else
-      chunk = data.substr(i);
+      chunk = data.substr(index);
+    if(chunk.length() < 64)
+      chunk += std::string(64 - chunk.length(), '0');
     chunks.push_back(chunk);
+
   }
+  while (index++ < data.length() / 64);
 
   #ifdef DEBUG
   std::cout << "Chunks: \n";
   for(int i = 0; i < chunks.size(); i++)
     std::cout << chunks[i] + '\n';
   #endif
+
+  // Initial Permutation
+  chunks[0] = BSHelper::Permute(chunks[0], initPermTable, 64);
+
+  #ifdef DEBUG
+  std::cout << "\n" << "After permutation: \n" << data << "\n\n";
+  #endif // DEBUG
 
   // Generate keys
   std::vector<std::string> keys = GenerateKeys(key);
@@ -57,9 +66,17 @@ std::string DES::Encrypt(std::string data, std::string key)
   std::stringstream cipherStream;
   for(int i = 0; i < chunks.size(); i++)
   {
+    #ifdef DEBUG
+    std::cout << "\n-----------------\nChunk " << i << "\n-----------------\n\n";
+    #endif // DEBUG
     std::string cipherChunk = chunks[i];
     for (int j = 0; j < 16; j++)
+    {
+      #ifdef DEBUG
+      std::cout << "\nRound " << j << ":";
+      #endif // DEBUG
       cipherChunk = Round(cipherChunk, keys[j]);
+    }
 
     // 32 bit swap
     cipherChunk = cipherChunk.substr(cipherChunk.length() + 1) + cipherChunk.substr(0, cipherChunk.length() / 2);
@@ -75,16 +92,24 @@ std::string DES::Encrypt(std::string data, std::string key)
   return output;
 }
 
+/// Decrypt the data with the key
+/// data: The data as a binary string
+/// key: The key as a binary string
+/// returns the decrypted ascii plain-text
 std::string DES::Decrypt(std::string data, std::string key)
 {
 
 }
 
+/// Perform a single round of the DES algorithm
+/// data: The round data as a binary string
+/// key: The round key as a binary string
+/// returns the a string containing the left and right halves for the round joined together
 std::string DES::Round(std::string data, std::string key)
 {
-  std::string left(data.substr(0, data.length() / 2));
-  std::string right(data.substr((data.length() / 2) + 1));
-  std::string originalRight(right);
+  std::string left = data.substr(0, data.length() / 2);
+  std::string right = data.substr(data.length() / 2);
+  std::string originalRight = right;
   char expansionTable[48]=
   {
     32,1,2,3,4,5,4,5,6,7,8,9,8,9,10,11,
@@ -92,18 +117,35 @@ std::string DES::Round(std::string data, std::string key)
     22,23,24,25,24,25,26,27,28,29,28,29,30,31,32,1
   };
   right = BSHelper::Permute(right, expansionTable, 48);
+      #ifdef DEBUG
+      std::cout << "\nExpansion: " << right;
+      std::cout << "\nKey:       " << key;
+      #endif // DEBUG
   right = BSHelper::Xor(right, key);
+      #ifdef DEBUG
+      std::cout << "\nExpXorKey: " << right;
+      #endif // DEBUG
   right = Substitution(right);
+      #ifdef DEBUG
+      std::cout << "\nSBoxes:    " << right;
+      #endif // DEBUG
   char permute[32]=
   {
     16,7,20,21,29,12,28,17,1,15,23,26,5,18,31,10,
     2,8,24,14,32,27,3,9,19,13,30,6,22,11,4,25
   };
   right = BSHelper::Permute(right, permute, 32);
+      #ifdef DEBUG
+      std::cout << "\nf(R,K):   " << right;
+      std::cout << "\nL = R-1:  " << originalRight << "\n\n";
+      #endif // DEBUG
   right = BSHelper::Xor(left, right);
   return originalRight + right;
 }
 
+/// Substitute the input data using the Substitution Tables
+/// data: The data as a binary string
+/// returns the substituted data as a binary string
 std::string DES::Substitution(std::string data)
 {
   // Break data into S-Box inputs
@@ -135,6 +177,9 @@ std::string DES::Substitution(std::string data)
   return output;
 }
 
+/// Generate the 16 round keys
+/// key: The provided key as a binary string
+/// returns a vector of keys
 std::vector<std::string> DES::GenerateKeys(std::string key)
 {
   // Drop every 8th bit to get 56-bit key
@@ -155,7 +200,7 @@ std::vector<std::string> DES::GenerateKeys(std::string key)
     52,31,37,47,55,30,40,51,45,33,48,44,49,39,56,34,53,46,42,50,36,29,32
   };
 
-  newKey = BSHelper::Permute(newKey, permChoice1, 56);
+  newKey = BSHelper::Permute(key, permChoice1, 56);
 
   std::vector<std::string> keys;
   int shifts[16]= { 1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1 };
@@ -163,9 +208,9 @@ std::vector<std::string> DES::GenerateKeys(std::string key)
   {
     // Split into left and right
     std::string left = BSHelper::LeftCircularShift(newKey.substr(0, newKey.length() / 2), shifts[i]);
-    std::string right = BSHelper::LeftCircularShift(newKey.substr((newKey.length() / 2) + 1), shifts[i]);
-    std::string full(left + right);
-    keys.push_back(BSHelper::Permute(full, permChoice2, 48));
+    std::string right = BSHelper::LeftCircularShift(newKey.substr(newKey.length() / 2), shifts[i]);
+    newKey = left + right;
+    keys.push_back(BSHelper::Permute(newKey, permChoice2, 48));
   }
   return keys;
 }
