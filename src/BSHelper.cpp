@@ -19,9 +19,13 @@ std::string BSHelper::Xor(std::string str1, std::string str2)
 
 std::string BSHelper::Permute(std::string input, char permTable[], int tableSize)
 {
-  std::string output(tableSize, 0);
+  std::string output(tableSize, '~');
   for(int i = 0; i < tableSize; i++)
+  {
+    if(permTable[i] > input.size())
+      throw ConversionException("Permutation input string shorter than table requires.");
     output[i] = input[permTable[i]];
+  }
   return output;
 }
 

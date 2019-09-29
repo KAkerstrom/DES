@@ -1,3 +1,5 @@
+#define DEBUG
+
 #include "DES.h"
 #include "Exceptions.h"
 #include "BSHelper.h"
@@ -13,10 +15,19 @@ DES::DES()
 
 std::string DES::Encrypt(std::string data, std::string key)
 {
+  // Initial Permutation
+  data = BSHelper::Permute(data, initPermTable, 64);
+
+  #ifdef DEBUG
+  std::cout << "\n" << "After permutation: \n" << data << "\n\n";
+  #endif // DEBUG
+
   // Split the input data into 64-bit chunks
   std::vector<std::string> chunks;
 
+  #ifdef DEBUG
   std::cout << "\n\ndata: \n" << data << "\n\n";
+  #endif // DEBUG
 
   for(int i = 0; i < data.length() / 8; i++)
   {
@@ -28,20 +39,20 @@ std::string DES::Encrypt(std::string data, std::string key)
     chunks.push_back(chunk);
   }
 
-
-
+  #ifdef DEBUG
   std::cout << "Chunks: \n";
   for(int i = 0; i < chunks.size(); i++)
     std::cout << chunks[i] + '\n';
-
-
-
-
-  // Initial Permutation
-  chunks[0] = BSHelper::Permute(chunks[0], initPermTable, 64);
+  #endif
 
   // Generate keys
   std::vector<std::string> keys = GenerateKeys(key);
+
+  #ifdef DEBUG
+  std::cout << "\n\nKeys:\n";
+  for (int i = 0; i < keys.size(); i++)
+    std::cout << keys[i] << '\n';
+  #endif // DEBUG
 
   std::stringstream cipherStream;
   for(int i = 0; i < chunks.size(); i++)
