@@ -13,7 +13,7 @@ std::string BSHelper::LeftCircularShift(std::string input, int amount)
 
 std::string BSHelper::Xor(std::string str1, std::string str2)
 {
-  std::string output(str1.length(), 0);
+  std::string output(str1.length(), '~');
   for (int i = 0; i < str1.length(); i++)
     output[i] = (str1[i] == '1') ^ (str2[i] == '1') ? '1' : '0';
   return output;

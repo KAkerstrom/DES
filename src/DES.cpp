@@ -19,25 +19,12 @@ DES::DES()
 /// returns the encrypted data as a binary string
 std::string DES::Encrypt(std::string data, std::string key)
 {
-  // Split the input data into 64-bit chunks
-  std::vector<std::string> chunks;
-
   #ifdef DEBUG
   std::cout << "\n\ndata: \n" << data << "\n\n";
   #endif // DEBUG
 
-  int index = 0;
-  for (int i = 0; i < data.length(); i += 64)
-  {
-    std::string chunk;
-    if(i + 64 < data.length())
-      chunk = data.substr(i, 64);
-    else
-      chunk = data.substr(i);
-    if(chunk.length() < 64)
-      chunk += std::string(64 - chunk.length(), '0');
-    chunks.push_back(chunk);
-  }
+  // Split the input data into 64-bit chunks
+  std::vector<std::string> chunks = GenerateChunks(data);
 
   #ifdef DEBUG
   std::cout << "Chunks: \n";
@@ -46,7 +33,8 @@ std::string DES::Encrypt(std::string data, std::string key)
   #endif
 
   // Initial Permutation
-  chunks[0] = BSHelper::Permute(chunks[0], initPermTable, 64);
+  for(int i = 0; i < chunks.size(); i++)
+    chunks[i] = BSHelper::Permute(chunks[i], initPermTable, 64);
 
   #ifdef DEBUG
   std::cout << "\n" << "After permutation: \n" << chunks[0] << "\n\n";
@@ -112,33 +100,16 @@ std::string DES::Encrypt(std::string data, std::string key)
 /// returns the decrypted ascii plain-text
 std::string DES::Decrypt(std::string data, std::string key)
 {
-  // Split the input data into 64-bit chunks
-  std::vector<std::string> chunks;
-
   #ifdef DEBUG
   std::cout << "\n\ndata: \n" << data << "\n\n";
   #endif // DEBUG
 
-  for (int i = 0; i < data.length(); i += 64)
-  {
-    std::string chunk;
-    if(i + 64 < data.length())
-      chunk = data.substr(i, 64);
-    else
-      chunk = data.substr(i);
-    if(chunk.length() < 64)
-      chunk += std::string(64 - chunk.length(), '0');
-    chunks.push_back(chunk);
-  }
-
-      #ifdef DEBUG
-      std::cout << "Chunks: \n";
-      for(int i = 0; i < chunks.size(); i++)
-        std::cout << chunks[i] + '\n';
-      #endif
+  // Split the input data into 64-bit chunks
+  std::vector<std::string> chunks = GenerateChunks(data);
 
   // Initial Permutation
-  chunks[0] = BSHelper::Permute(chunks[0], initPermTable, 64);
+  for(int i = 0; i < chunks.size(); i++)
+    chunks[i] = BSHelper::Permute(chunks[i], initPermTable, 64);
 
       #ifdef DEBUG
       std::cout << "\n" << "After permutation: \n" << chunks[0] << "\n\n";
@@ -301,4 +272,22 @@ std::vector<std::string> DES::GenerateKeys(std::string key)
     keys.push_back(BSHelper::Permute(newKey, permChoice2, 48));
   }
   return keys;
+}
+
+std::vector<std::string> DES::GenerateChunks(std::string data)
+{
+  std::vector<std::string> chunks;
+  for (int i = 0; i < data.length(); i += 64)
+  {
+    std::string chunk = data.substr(i, 64);
+    if(chunk.length() < 64)
+      chunk += std::string(64 - chunk.length(), '0');
+    chunks.push_back(chunk);
+  }
+      #ifdef DEBUG
+      std::cout << "Chunks: \n";
+      for(int i = 0; i < chunks.size(); i++)
+        std::cout << chunks[i] + '\n';
+      #endif
+  return chunks;
 }

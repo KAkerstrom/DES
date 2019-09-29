@@ -17,6 +17,7 @@ class DES
       std::string Expansion(std::string data);
       std::string Substitution(std::string data);
       std::vector<std::string> GenerateKeys(std::string key);
+      std::vector<std::string> GenerateChunks(std::string data);
 
       char initPermTable[64] =
       {
