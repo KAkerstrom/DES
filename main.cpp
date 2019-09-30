@@ -8,11 +8,31 @@
 #include "DES.h"
 #include "test.h"
 
+std::string GetSelection(std::string menu, std::vector<std::string> options)
+{
+  bool validOption = false;
+  std::string selection;
+  while (!validOption)
+  {
+    std::cout << "\n" << menu;
+    std::cout << "\nYour selection: ";
+    std::cin >> selection;
+    std::cout << "\n\n";
+
+    for(int i = 0; i < options.size(); i++)
+      if(selection == options[i])
+        validOption = true;
+    if(!validOption)
+      std::cout << "Invalid option selected.\n";
+  }
+  return selection;
+}
 
 std::string GetData()
 {
   bool validFile = false;
   std::string path;
+  std::string output;
   while (!validFile)
   {
     std::cout << "\nInput file name: ";
@@ -23,24 +43,30 @@ std::string GetData()
 //        path = path.substr(0, i);
 //        break;
 //      }
-    path = "files/" + path;
 
     try
     {
       std::ifstream file;
       file.open(path.c_str());
-      std::string output;
       if (file.is_open())
+      {
         while (!file.eof())
           file >> output;
-      file.close();
-      validFile = true;
+        file.close();
+        validFile = true;
+      }
+      else
+      {
+        std::cout << "\n\nCould not read from file.\n";
+        std::cout << "Only enter the filename (with the extension), such as \"file.txt\".\n";
+        std::cout << "The file should be located in the same location as the program EXE.\n";
+      }
     }
     catch(const std::exception& e)
     {
       std::cout << "\n\nCould not read from file.\n";
       std::cout << "Only enter the filename (with the extension), such as \"file.txt\".\n";
-      std::cout << "The file should be located in the \"files\" directory, found in the same location as the EXE.\n";
+      std::cout << "The file should be located in the same location as the program EXE.\n";
     }
   }
 
@@ -50,8 +76,8 @@ std::string GetData()
   std::string selection = GetSelection("What is the file encoding?\n1- ASCII\n2- Hexadecimal", options);
 
   if(selection == "1")
-    return BSHelper::AsciiToBits(data);
-  return BSHelper::HexToBits(data);
+    return BSHelper::AsciiToBits(output);
+  return BSHelper::HexToBits(output);
 }
 
 std::string GetKey()
@@ -83,27 +109,6 @@ std::string GetKey()
     }
   }
 }
-
-std::string GetSelection(std::string menu, std::vector<std::string> options)
-{
-  bool validOption = false;
-  std::string selection;
-  while (!validOption)
-  {
-    std::cout << "\n" << menu;
-    std::cout << "\nYour selection: ";
-    std::cin >> selection;
-    std::cout << "\n\n";
-
-    for(int i = 0; i < options.size(); i++)
-      if(selection == options[i])
-        validOption = true;
-    if(!validOption)
-      std::cout << "Invalid option selected.\n";
-  }
-  return selection;
-}
-
 
 int main(int argc, char** argv)
 {
