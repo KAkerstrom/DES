@@ -39,7 +39,6 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="src/BSHelper.cpp" />
 		<Unit filename="src/DES.cpp" />
-		<Unit filename="test.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

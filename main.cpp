@@ -110,6 +110,15 @@ std::string GetKey()
   }
 }
 
+bool WriteToFile(std::string path, std::string data)
+{
+  ofstream file;
+  file.open (path);
+  file << data;
+  file.close();
+  return 0;
+}
+
 int main(int argc, char** argv)
 {
   DES des;
@@ -119,36 +128,52 @@ int main(int argc, char** argv)
   std::cout << "PROGRAMMING  ASSIGNMENT\n";
   std::cout << "   BY KYLE AKERSTROM\n\n";
 
-  std::vector<std::string> options;
-  options.push_back("1");
-  options.push_back("2");
-  options.push_back("3");
-  std::string input = GetSelection("1- Encrypt\n2- Decrypt\n3- Encrypt & Decrypt (Test)", options);
+  bool running = true;
+  while(running)
+  {
+    std::vector<std::string> options;
+    options.push_back("1");
+    options.push_back("2");
+    options.push_back("3");
+    std::string input = GetSelection("1- Encrypt\n2- Decrypt\n3- Encrypt & Decrypt (Test)", options);
 
-  if(input == "1")
-  {
-    std::string data = GetData();
-    std::string key = GetKey();
-    std::string output = des.Encrypt(data, key);
-    std::cout << BSHelper::BitsToHex(output); //TODO output to file
-  }
-  else if (input == "2")
-  {
-    std::string data = GetData();
-    std::string key = GetKey();
-    std::string output = des.Decrypt(data, key);
-    std::cout << output;
-  }
-  else if (input == "3")
-  {
-    std::cout << "\nInput ASCII data (with no spaces): ";
-    std::string data;
-    std::cin >> data;
-    std::string key = GetKey();
-    std::string output = des.Encrypt(data, key);
-    std::cout << "\n\nENCRYPTED: " << BSHelper::BitsToHex(output) << '\n';
-    output = des.Decrypt(output, key);
-    std::cout << "RESULT:    " << BSHelper::BitsToAscii(output) << "\n\n";
+    if(input == "1")
+    {
+      std::string data = GetData();
+      std::string key = GetKey();
+      std::string output = des.Encrypt(data, key);
+      std::cout << "Encrypted cipher-text: ";
+      std::cout << BSHelper::BitsToHex(output); //TODO output to file
+      std::vector<std::string> options;
+      options.push_back("1");
+      options.push_back("2");
+      std::string selection = GetSelection("Would you like to output to a file?\n\n1- Yes\n2- No", options);
+      if(selection == "1")
+      {
+        std::string filename = getd
+      }
+      selection = GetSelection("Would you like to encrypt or decrypt another file?\n\n1- Yes\n2- No", options);
+      if(selection == 2)
+        running = false;
+    }
+    else if (input == "2")
+    {
+      std::string data = GetData();
+      std::string key = GetKey();
+      std::string output = des.Decrypt(data, key);
+      std::cout << output;
+    }
+    else if (input == "3")
+    {
+      std::cout << "\nInput ASCII data (with no spaces): ";
+      std::string data;
+      std::cin >> data;
+      std::string key = GetKey();
+      std::string output = des.Encrypt(data, key);
+      std::cout << "\n\nENCRYPTED: " << BSHelper::BitsToHex(output) << '\n';
+      output = des.Decrypt(output, key);
+      std::cout << "RESULT:    " << BSHelper::BitsToAscii(output) << "\n\n";
+    }
   }
 
 }
