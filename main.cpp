@@ -9,7 +9,7 @@
 #include "test.h"
 
 
-std::string GetData(std::string extension)
+std::string GetData()
 {
   bool validFile = false;
   std::string path;
@@ -49,14 +49,9 @@ std::string GetData(std::string extension)
   options.push_back("2");
   std::string selection = GetSelection("What is the file encoding?\n1- ASCII\n2- Hexadecimal", options);
 
-  /////////////////////////////////////////////////
-  /////////////////////////////////////////////////
-  /////////////////////////////////////////////////
-  /////////////////////////////////////////////////
-  /////////////////////////////////////////////////
-  /////////////////////////////////////////////////
-  /////////////////////////////////////////////////
-  /////////////////////////////////////////////////
+  if(selection == "1")
+    return BSHelper::AsciiToBits(data);
+  return BSHelper::HexToBits(data);
 }
 
 std::string GetKey()
@@ -83,7 +78,7 @@ std::string GetKey()
       }
       catch(ConversionException e)
       {
-        std::cout << "\nInvalid key length. Must be 16 hex digits.";
+        std::cout << "\nInvalid key input / length. Must be 16 hex digits.";
       }
     }
   }
@@ -118,89 +113,37 @@ int main(int argc, char** argv)
   std::cout << "CPSC 3730  CRYPTOGRAPHY\n";
   std::cout << "PROGRAMMING  ASSIGNMENT\n";
   std::cout << "   BY KYLE AKERSTROM\n\n";
-  std::cout << "\n";
-  std::cout << "Please enter your selection: ";
 
   std::vector<std::string> options;
   options.push_back("1");
   options.push_back("2");
   options.push_back("3");
-  std::string input = GetSelection("1- Encrypt\n2- Decrypt\n3- Encrypt / Decrypt", options);
+  std::string input = GetSelection("1- Encrypt\n2- Decrypt\n3- Encrypt & Decrypt (Test)", options);
 
+  if(input == "1")
+  {
+    std::string data = GetData();
+    std::string key = GetKey();
+    std::string output = des.Encrypt(data, key);
+    std::cout << BSHelper::BitsToHex(output); //TODO output to file
+  }
+  else if (input == "2")
+  {
+    std::string data = GetData();
+    std::string key = GetKey();
+    std::string output = des.Decrypt(data, key);
+    std::cout << output;
+  }
+  else if (input == "3")
+  {
+    std::cout << "\nInput ASCII data (with no spaces): ";
     std::string data;
-    std::string key;
-    if(input == "1")
-    {
-      std::cout << "\nInput data: ";
-
-      #ifdef DEBUG
-        data = BSHelper::HexToBits("0123456789ABCDEF");
-      #else
-        std::cin >> data;
-        data = BSHelper::AsciiToBits(data);
-      #endif // DEBUG
-
-
-      //getkey
-
-      std::string output = des.Encrypt(data, key);
-      std::cout << BSHelper::BitsToHex(output);
-    }
-    else if (input == "2")
-    {
-      std::cout << "\nInput cipher hex: ";
-
-      std::cin >> data;
-      data = BSHelper::HexToBits(data);
-
-      bool validKey = false;
-      while (!validKey)
-      {
-        std::cout << "\nInput 64-bit hex key: ";
-
-        #ifdef DEBUG
-          key = "133457799BBCDFF1";
-        #else
-          std::cin >> key;
-        #endif // DEBUG
-
-        if(key.length() != 16)
-          std::cout << "\nInvalid key length. Must be 16 hex digits.";
-        else
-          try
-          {
-            key = BSHelper::HexToBits(key);
-            #ifdef DEBUG
-            std::cout << "\n\nKey Binary: \n" << key << '\n';
-            #endif // DEBUG
-
-            validKey = true;
-          }
-          catch(ConversionException e)
-          {
-            std::cout << "\nInvalid key length. Must be 16 hex digits.";
-          }
-      }
-
-      std::string output = des.Decrypt(data, key);
-      std::cout << output;
-    }
-    else if (input == "3")
-    {
-      std::cout << "\nInput data: ";
-
-      std::cin >> data;
-      data = BSHelper::AsciiToBits(data);
-
-
-      key = GetKey();
-
-      std::string output = des.Encrypt(data, key);
-      std::cout << "\n\nENCRYPTED: " << (output) << '\n';
-      output = des.Decrypt(output, key);
-      std::cout << "RESULT:    " << BSHelper::BitsToAscii(output) << "\n\n";
-    }
-    else
-      std::cout << "\n\nInvalid input.\n1- Encrypt\n2- Decrypt\n";
+    std::cin >> data;
+    std::string key = GetKey();
+    std::string output = des.Encrypt(data, key);
+    std::cout << "\n\nENCRYPTED: " << BSHelper::BitsToHex(output) << '\n';
+    output = des.Decrypt(output, key);
+    std::cout << "RESULT:    " << BSHelper::BitsToAscii(output) << "\n\n";
+  }
 
 }
