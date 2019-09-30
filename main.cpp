@@ -6,7 +6,6 @@
 #include "Exceptions.h"
 #include "BSHelper.h"
 #include "DES.h"
-#include "test.h"
 
 std::string GetSelection(std::string menu, std::vector<std::string> options)
 {
