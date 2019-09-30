@@ -1,4 +1,4 @@
-#define DEBUG
+//#define DEBUG
 
 #include "DES.h"
 #include "Exceptions.h"
